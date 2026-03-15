@@ -1,0 +1,34 @@
+name: KuCoin Scanner 24/7
+
+on:
+  schedule:
+    # Ejecutar cada 30 minutos (ajusta según necesites)
+    - cron: '*/30 * * * *'
+  workflow_dispatch:   # Permite ejecución manual
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v3
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Instalar dependencias
+        run: |
+          pip install -r requirements.txt
+
+      - name: Ejecutar escáner + simulación
+        run: |
+          python scanner_bot.py
+
+      - name: Subir reportes como artefacto
+        uses: actions/upload-artifact@v3
+        with:
+          name: reports
+          path: report_*.txt
+          if-no-files-found: warn
